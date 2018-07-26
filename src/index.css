@@ -8,6 +8,14 @@ ol, ul {
   padding-left: 30px;
 }
 
+.square:focus {
+  outline: none;
+}
+
+.tabButton:focus{
+  outline:none;
+}
+
 .buttons{
   height:inherit;
   margin:inherit;
@@ -17,9 +25,18 @@ ol, ul {
 .gridLabel{
   float: left;
   font-size: smaller;
+  background-color: white;
+  box-sizing: border-box;
+  border-right: solid white 4px;
+  color:black;
+}
+
+.gridLabel.sharp{
   background-color: black;
-  border: solid grey 1px;
-  color:white;
+  color: white;
+  border-right: solid white 4px;
+
+
 }
 
 .topButton{
@@ -37,6 +54,23 @@ ol, ul {
   border:none;
   user-select: none;
   border-radius: none;
+}
+
+.tabButton{
+  background-color: lightgrey;
+    border-top-left-radius: 25%;
+    border-top-right-radius: 25%;
+    border-bottom-left-radius: 0%;
+    border-bottom-right-radius: 0%;
+    border: solid 1px white;
+    padding: 6px;
+    color: blue;
+    transition: 0.2s;
+    width: auto;
+}
+
+.tabButton.selected{
+  background-color: darkgrey;
 }
 
 select.topButton{
@@ -58,15 +92,8 @@ select.topButton{
   margin-bottom: 20px;
 }
 
-.square {
-  background: #fff;
-  box-sizing: border-box;
-  border-right: 1px solid black;
-  border-top: 1px solid black;
-  float: left;
-  margin-right: 0px;
-  margin-top: 0px;
-  padding: 0;
+.square{
+  background: inherit;
   display: inline-table;
   user-select: none;
   -webkit-user-select: none;  /* Chrome all / Safari all */
@@ -90,13 +117,11 @@ border: solid black 2px;
 }
 
 .gridContainer{
-    margin-right: auto;
-    margin-left: auto;
+    margin-right: 0px;
+    margin-left: 0px;
     /*padding-top: 15px;*/
     padding-right: 0px;
     padding-left: 0px;
-    height:400px;
-    width:1000px;
     border: 0.5px solid black;
     border-left: 2px solid black;
 
@@ -129,8 +154,12 @@ border: solid black 2px;
 .grid-row{
   overflow-x: scroll;
   overflow-y: hidden;
-  baclground-color:blue;
+  width:auto;
+  background-color:white;
+}
 
+.grid-row.sharp{
+  background-color: grey;
 }
 .square.right.left.clicked{
   border-right: blue solid 3px;
@@ -141,6 +170,7 @@ border: solid black 2px;
 .square.clicked{
   border-left: none;
   border-right: none;
+  box-sizing: border-box;
   background-color: black;
   border-top: solid blue 3px;
   border-bottom: solid blue 3px;

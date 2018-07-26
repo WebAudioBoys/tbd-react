@@ -1,40 +1,6 @@
 import React from 'react';
-// import ReactDOM from 'react-dom';
-
-
-class TopBar extends React.Component{
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      playing: true,
-      channel: 0,
-    }
-
-    this.handleChange = this.handleChange.bind(this);
-    }
-
-  handleForPlay(){
-    let toggle = !this.state.playing
-    this.setState({
-      playing: toggle,
-    })
-  }
-
-  handleClear(){
-    console.log('Clear')
-  }
-
-  handleChange(event) {
-    let selected = event.target.value
-
-    this.setState({
-      channel: parseInt(selected.slice(-2)),
-    });
-  }
-
-  render(){
-    let isPlaying = !this.state.playing ? 'topButton playing':'topButton';
+function TopBar(props){
+    let isPlaying = props.playing ? 'topButton playing':'topButton';
     return(
   <div className="topBar">
   <div className="bold_text"> tbd 2</div>
@@ -42,24 +8,31 @@ class TopBar extends React.Component{
     <TopButton
       class = {isPlaying}
       text="Play"
-      onMouseDown={() => this.handleForPlay()}
+      onMouseDown={props.onPlayClick}
       ix={0}
     />
     <TopButton
       text="Clear"
       class={"topButton"}
-      onMouseDown={() => this.handleClear()}
+      onMouseDown={props.handleClear}
       ix={1}
     />
+    <TopButton
+      text="AddTab"
+      class={"topButton"}
+      onMouseDown={props.addTab}
+      ix={2}
+    />
+
     <ChannelDropdown
-      onChange={this.handleChange}
-      channel={this.state.channel}
+      onChange={props.handleChange}
+      channel={props.channel}
     />
    </div>
 </div>
   )
 }
-}
+
 
 function TopButton(props){
   return (

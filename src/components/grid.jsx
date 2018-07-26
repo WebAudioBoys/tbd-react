@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B',];
 function styleSquares(cell){
@@ -25,24 +25,34 @@ function styleSquares(cell){
   }
 }
 
+function GridContainer(props){
+  return(
+    <div className={props.className}
+      style={{height: props.height, width: props.width}}
+      onMouseLeave={props.onGridLeave}
+      >
+        {props.grid}
+    </div>
+  )
+}
+
 function Square(props){
   return (
     //what is inside the state of the grid goes here
-      <button className={styleSquares(props.cellStatus)}
+      <div className={styleSquares(props.cellStatus)}
         onMouseDown={props.onMouseDown}
         onMouseLeave={props.onMouseLeave}
         onMouseEnter={props.onMouseEnter}
         onMouseUp={props.onMouseUp}
         style={{height: props.height, width: props.width}}
         >{props.value}
-      </button>
+      </div>
     );
   }
 
   function Label(props){
     return(
       <div className = {props.className}
-        key={props.key}
         style={{height:props.height, width:props.width}}
         >
         {props.noteName}
@@ -53,7 +63,7 @@ function Square(props){
 //Proto of each row
 function Row(props){
       return (
-        <div className="grid-row" onClick={props.onClick} key={props.number} style={{height: props.height, width: '100%'}}>
+        <div className={props.className} onClick={props.onClick} style={{height: props.height, width: 'auto'}}>
           {props.value}
         </div>
       )
@@ -63,8 +73,14 @@ function Row(props){
 class Grid extends React.Component {
   constructor(props) {
     super(props);
-    console.log(props);
     let empty = [];
+    let containerH = 500
+    let containerW = window.innerWidth - 50;
+    let height = 500/props.rows;
+    let width = Math.ceil(containerW-20)/(props.columns);
+    containerW = 20+(width * props.columns);
+
+    console.log('Cont',containerW,'width',width, 'cols', props.columns)
     for (var i = 0; i < props.rows;i++){ empty.push([])
       for (var j = 0; j < props.columns; j++) {
         empty[i].push([]);
@@ -74,8 +90,8 @@ class Grid extends React.Component {
       squares: empty,
       rows: props.rows,
       columns: props.columns,
-      height: 400/props.rows,
-      width: 900/props.columns+1,
+      height: height,
+      width: width,
       currentRow: '',
       currentColumn:'',
       lastCellLeft: '',
@@ -86,10 +102,11 @@ class Grid extends React.Component {
       reversing: false,
       endingColumn: '',
       notes: [],
+      containerW: containerW,
+      containerH: containerH,
     }
 
   }
-
 
   handleClick(i,j,clickType) {
     const squares = this.state.squares.slice();
@@ -213,30 +230,37 @@ class Grid extends React.Component {
   createGrid = () => {
     let grid = [];
     //For the rows
+    let counter = -1
     for(let i = 0;i < this.state.rows; i++){
       let row = []
-      let labelClass = NOTES[i%NOTES.length].includes('#') ?'gridLabel sharp':'gridLabel';
+      counter = i%NOTES.length===0 ? counter + 1: counter;
+      let labelClass = NOTES[i%NOTES.length].includes('#') ?' sharp':'';
       row.push(<Label
                           noteName={NOTES[i%NOTES.length]}
-                          number={i}
-                          className={labelClass}
+                          key={NOTES[i%NOTES.length]+counter}
+                          className={'gridLabel '+ labelClass}
                           height={this.state.height}
-                          width={this.state.width}
+                          width={20}
                     />)
       //For each cell
       for (let j = 0; j < this.state.columns; j++){
         row.push(this.renderSquare(i,j));
       }
-      grid.push(Row({value: row, key: i , height: this.state.height}));
+      grid.push(Row({value: row, key: -1*i, className: 'grid-row'+labelClass,height: this.state.height}));
     }
+
     return grid;
   }
 
   render() {
+
     return (
-      <div className="gridContainer">
-        {this.createGrid()}
-      </div>
+      <GridContainer
+        grid ={this.createGrid()}
+        className="gridContainer"
+        height={this.state.containerH}
+        width={this.state.containerW}
+      />
     );
   }
 }
