@@ -122,11 +122,25 @@ border: solid black 2px;
     /*padding-top: 15px;*/
     padding-right: 0px;
     padding-left: 0px;
-    border: 0.5px solid black;
-    border-left: 2px solid black;
+    border: 1px solid black;
+    border-left: 1px solid black;
+    overflow-y: auto;
+}
+
+.gridContainer.newIns{
+  border: none;
+  text-align: center;
+
 
 }
 
+.newInst{
+  text-align: center;
+  background-color: white;
+  padding:20px;
+  width: 40%;
+  margin:0 auto;
+}
 .bold_text {
     color: white;
     font-family: "Helvetica";
@@ -142,12 +156,20 @@ border: solid black 2px;
 
 .square.left.clicked{
   border-left: blue solid 3px;
-
+  cursor:grab;
   background-color: black;
 }
 
 .square.right.clicked{
   border-right: blue solid 3px;
+  cursor:grab;
+  background-color: black;
+}
+
+.square.right.left.clicked{
+  border-right: blue solid 3px;
+  border-left: blue solid 3px;
+  cursor:grab;
   background-color: black;
 }
 
@@ -161,13 +183,10 @@ border: solid black 2px;
 .grid-row.sharp{
   background-color: grey;
 }
-.square.right.left.clicked{
-  border-right: blue solid 3px;
-  border-left: blue solid 3px;
-  background-color: black;
-}
+
 
 .square.clicked{
+    cursor:grab;
   border-left: none;
   border-right: none;
   box-sizing: border-box;
