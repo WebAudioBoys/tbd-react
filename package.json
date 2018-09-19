@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "p5": "^0.6.1",
+    "p5": "^0.7.2",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
-    "react-scripts": "1.1.4",
+    "react-scripts": "^1.1.5",
     "tone": "^0.12.80",
     "webmidi": "^2.2.0"
   },
