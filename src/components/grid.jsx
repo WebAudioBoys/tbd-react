@@ -20,6 +20,7 @@ function Grid(props) {
         className={props.containerClass}
         height={props.containerH}
         width={props.containerW}
+        onGridLeave={console.log('hi')}
       />
     );
 }

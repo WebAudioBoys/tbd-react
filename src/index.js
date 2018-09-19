@@ -50,7 +50,7 @@ class TBD2 extends React.Component {
 
       },{
         squares: [],
-        rows: 50,
+        rows: 10,
         columns: 32,
         height: '',
         width:'',
@@ -60,7 +60,7 @@ class TBD2 extends React.Component {
 
     // for(let i = 1; i<this.state.instruments.length;i++){
     let currentInst = this.state.instruments[1];
-    currentInst.height = 500/30;
+    currentInst.height = currentInst.rows > 29 ? 500/30 : 500/currentInst.rows;
     currentInst.width = Math.ceil(containerW-20)/(currentInst.columns);
     for (var i = 0; i < currentInst.rows;i++){
       empty.push([]);
@@ -81,6 +81,14 @@ instName(e){
   this.setState({
     newInst: {name: e.target.value, rows: this.state.newInst.rows},
   })
+}
+
+rowDown(e){
+  console.log(e.clientX-40);
+}
+
+rowUp(e){
+  console.log()
 }
 
 countRows(e){
@@ -178,12 +186,26 @@ handleChange(event) {
   return tabs;
 }
 
+handleRowClick(e,index,clickType){
+  switch(clickType){
+    case 'down':
+    console.log(e.clientX-40);
+    break;
+    case 'up':
+
+    break;
+    default:
+    break;
+
+  }
+}
 
 handleClick(i,j,clickType) {
   let insts = this.state.instruments.slice();
   let currentInst = insts[this.state.currentTab]
   let squares = currentInst.squares.slice();
   let notes = currentInst.notes.slice();
+
   switch(clickType){
     case 'down':
       squares[i][j] = squares[i][j] === 'clicked'? '' : 'clicked';
@@ -323,13 +345,14 @@ createGrid = () => {
                   />)
     //For each cell
     for (let j = 0; j < currentInst.columns; j++){
-      row.push(this.renderSquare(i,j));
+      // row.push(this.renderSquare(i,j));
     }
     grid.push(<Row
       value={row}
       key= {i.toString()+row}
      className={'grid-row'+labelClass}
      height={currentInst.height}
+     onMouseDown={(e)=>this.handleRowClick(e,row,'down')}
   />
   );
   }

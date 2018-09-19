@@ -51,7 +51,10 @@ function Square(props){
 //Proto of each row
 function Row(props){
       return (
-        <div className={props.className}  style={{height: props.height, width: 'auto'}}>
+        <div className={props.className}
+          style={{height: props.height, width: 'auto'}}
+          onMouseDown={props.onMouseDown}
+          >
           {props.value}
         </div>
       )
