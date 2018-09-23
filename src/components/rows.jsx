@@ -54,6 +54,8 @@ function Row(props){
         <div className={props.className}
           style={{height: props.height, width: 'auto'}}
           onMouseDown={props.onMouseDown}
+          onMouseUp={props.onMouseUp}
+          onMouseMove={props.onMouseMove}
           >
           {props.value}
         </div>

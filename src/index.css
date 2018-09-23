@@ -178,10 +178,23 @@ border: solid black 2px;
   overflow-y: hidden;
   width:auto;
   background-color:white;
+  position:relative;
 }
+
 
 .grid-row.sharp{
   background-color: grey;
+
+}
+
+.note{
+  position: absolute;
+  background-color: black;
+  height: 100%;
+}
+
+.note:hover{
+  border: solid 3px blue;
 }
 
 
