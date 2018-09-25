@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import TopBar from './components/top-bar.jsx'
 import Grid from './components/grid.jsx'
+import Note from './components/note.jsx'
 import {TabButton, TabButtons} from './components/tab-buttons.jsx'
 import {Row, Label, Square} from './components/rows.jsx'
 import NewInstrumentWindow from './components/newInstrumentWindow.jsx'
@@ -33,6 +34,10 @@ class TBD2 extends React.Component {
       channelToDisplay: 0,
       currentTab: 1,
       currentRow: '',
+      noteStarted:false,
+      startPos:'',
+      currPos:'',
+      endPos:'',
       containerClass: 'gridContainer',
       currentColumn:'',
       lastCellLeft: '',
@@ -50,7 +55,7 @@ class TBD2 extends React.Component {
 
       },{
         squares: [],
-        rows: 50,
+        rows: 10,
         columns: 32,
         height: '',
         width:'',
@@ -60,7 +65,7 @@ class TBD2 extends React.Component {
 
     // for(let i = 1; i<this.state.instruments.length;i++){
     let currentInst = this.state.instruments[1];
-    currentInst.height = 500/30;
+    currentInst.height = currentInst.rows > 29 ? 500/30 : 500/currentInst.rows;
     currentInst.width = Math.ceil(containerW-20)/(currentInst.columns);
     for (var i = 0; i < currentInst.rows;i++){
       empty.push([]);
@@ -178,12 +183,65 @@ handleChange(event) {
   return tabs;
 }
 
+handleRowClick(e,index,clickType){
+  let insts = this.state.instruments.slice();
+  switch(clickType){
+    case 'down':
+    this.setState({
+      currentRow: index,
+      startPos: e.clientX-22,
+      endPos:  e.clientX-22,
+      mouseIsDown: true,
+      reversing:false,
+    });
+    break;
+
+    case 'move':
+
+      if(this.state.mouseIsDown){
+        let poles = [this.state.startPos,e.clientX-22].sort((a,b)=> {return a - b});
+        if(!this.state.noteStarted){
+          insts[this.state.currentTab].notes.push({
+              start:poles[0],
+              end: poles[1],
+              row:this.state.currentRow
+              }
+          );
+            this.setState({
+              noteStarted:true,
+              instruments: insts,
+            });
+        } else {
+          let currIx = insts[this.state.currentTab].notes.length-1;
+          insts[this.state.currentTab].notes[currIx] = {start:poles[0],end: poles[1],row:this.state.currentRow}
+          this.setState({
+            instruments: insts,
+          });
+        }
+      }
+    break;
+    case 'up':
+    this.setState({
+      noteStarted: false,
+      mouseIsDown:false,
+      instruments: insts,
+    });
+
+
+    break;
+    default:
+    break;
+
+  }
+
+}
 
 handleClick(i,j,clickType) {
   let insts = this.state.instruments.slice();
   let currentInst = insts[this.state.currentTab]
   let squares = currentInst.squares.slice();
   let notes = currentInst.notes.slice();
+
   switch(clickType){
     case 'down':
       squares[i][j] = squares[i][j] === 'clicked'? '' : 'clicked';
@@ -321,18 +379,37 @@ createGrid = () => {
                         height={currentInst.height}
                         width={20}
                   />)
-    //For each cell
-    for (let j = 0; j < currentInst.columns; j++){
-      row.push(this.renderSquare(i,j));
-    }
+
+
+
     grid.push(<Row
       value={row}
       key= {i.toString()+row}
      className={'grid-row'+labelClass}
      height={currentInst.height}
+     onMouseDown={(e)=>this.handleRowClick(e,i,'down')}
+     onMouseMove ={(e)=>this.handleRowClick(e,i,'move')}
+     onMouseUp ={(e)=>this.handleRowClick(e,i,'up')}
   />
   );
   }
+
+  for(let i=0;i<currentInst.notes.length;i++){
+    let currentNote = currentInst.notes[i];
+    grid[currentNote.row].props.value.push(
+
+      <Note
+        className={'note'}
+        key={i}
+        width={currentNote.end-currentNote.start}
+        position={currentNote.start}
+      />
+    )
+  }
+
+
+
+
   return grid;
 }
 
