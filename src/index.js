@@ -10,6 +10,10 @@ import NewInstrumentWindow from './components/newInstrumentWindow.jsx'
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B',];
 
+function setRowHeight(numToDisp){
+
+}
+
 function createEmptygrid(rows){
   let empty = [];
   for (var i = 0; i < rows;i++){
@@ -55,7 +59,8 @@ class TBD2 extends React.Component {
 
       },{
         squares: [],
-        rows: 10,
+        rows: 128,
+        zoom: 32,
         columns: 32,
         height: '',
         width:'',
@@ -127,6 +132,30 @@ handleChange(event) {
     })
   }
 
+  zoom(inout){
+    let insts = this.state.instruments.slice();
+    let ix = this.state.currentTab;
+    switch(inout){
+      case "in":
+      if(insts[ix].zoom>4){
+      insts[ix].zoom-=4;
+      insts[ix].height = 500/insts[ix].zoom;
+      }
+      break;
+      case "out":
+      if(insts[ix].zoom<128){
+      insts[ix].zoom+=4;
+      insts[ix].height = 500/insts[ix].zoom;
+      }
+      break;
+      default:
+      console.err("Zoom in flag improperly sent");
+    }
+    this.setState({
+      instruments: insts
+    })
+  }
+
   addTab(){
     let currentTabs = this.state.tabs.slice();
     currentTabs.push({tabName: 'fucker', index: currentTabs.length, classToggle: 'selected'  })
@@ -138,11 +167,12 @@ handleChange(event) {
   newInstClick(){
     let insts = this.state.instruments.slice();
     let newIx = insts.length;
+    let newHeight = this.state.newInst.rows > this.state.zoom ? 500/32 : 500/this.state.newInst.rows;
     let newInst ={
         squares: createEmptygrid(this.state.newInst.rows),
         rows: this.state.newInst.rows,
         columns: 32,
-        height: 500/this.state.newInst.rows,
+        height: newHeight,
         width:Math.ceil(this.state.containerW-20)/(32),
         notes: [],
         }
@@ -226,8 +256,6 @@ handleRowClick(e,index,clickType){
       mouseIsDown:false,
       instruments: insts,
     });
-
-
     break;
     default:
     break;
@@ -425,6 +453,8 @@ createGrid = () => {
             onPlayClick={() => this.handleForPlay()}
             handleClear={() => this.handleClear()}
             addTab={()=>this.addTab()}
+            zoomIn={()=>this.zoom("in")}
+            zoomOut={()=>this.zoom("out")}
           />
           <TabButtons className="tabButtons"
             tabs={this.renderTabs()}

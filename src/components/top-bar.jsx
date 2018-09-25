@@ -23,6 +23,18 @@ function TopBar(props){
       onMouseDown={props.addTab}
       ix={2}
     />
+    <TopButton
+      text="Zoom In"
+      class={"topButton"}
+      onMouseDown={props.zoomIn}
+      ix={2}
+    />
+    <TopButton
+      text="Zoom Out"
+      class={"topButton"}
+      onMouseDown={props.zoomOut}
+      ix={2}
+    />
 
     <ChannelDropdown
       onChange={props.handleChange}
