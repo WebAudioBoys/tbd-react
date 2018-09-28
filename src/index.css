@@ -29,6 +29,7 @@ ol, ul {
   box-sizing: border-box;
   border-right: solid white 4px;
   color:black;
+  user-select:none;
 }
 
 .gridLabel.sharp{
@@ -130,8 +131,6 @@ border: solid black 2px;
 .gridContainer.newIns{
   border: none;
   text-align: center;
-
-
 }
 
 .newInst{
@@ -179,6 +178,7 @@ border: solid black 2px;
   width:auto;
   background-color:white;
   position:relative;
+  user-select: none;
 }
 
 
@@ -191,6 +191,7 @@ border: solid black 2px;
   position: absolute;
   background-color: black;
   height: 100%;
+  box-sizing: border-box;
 }
 
 .note:hover{

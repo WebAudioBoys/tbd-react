@@ -1,4 +1,7 @@
 import React from 'react';
+
+const QUANTS = ["No Quantization","1/4 Note","1/8th Note","1/16th Note","1/4 triplet","1/8 triplet","1/16 triplet"]
+const SUBDIVS = [0,4,8,16,6,12,24];
 function TopBar(props){
     let isPlaying = props.playing ? 'topButton playing':'topButton';
     return(
@@ -40,6 +43,10 @@ function TopBar(props){
       onChange={props.handleChange}
       channel={props.channel}
     />
+    <QuantDropdown
+      onQuantChange={props.quantChange}
+
+    />
    </div>
 </div>
   )
@@ -57,6 +64,22 @@ function TopButton(props){
       </button>
     );
 
+}
+
+function QuantDropdown(props){
+  let options = [];
+  for(let i = 0; i < QUANTS.length; i++){
+    options.push(<option key={i} val={SUBDIVS[i]}>{QUANTS[i]}</option>);
+  }
+  return(
+    <select
+    quant={props.quant}
+    className="topButton quant"
+    onChange={props.onQuantChange}
+    >
+    {options}
+  </select>
+)
 }
 
 function ChannelDropdown(props){

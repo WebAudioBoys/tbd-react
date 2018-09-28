@@ -7,12 +7,51 @@ import Note from './components/note.jsx'
 import {TabButton, TabButtons} from './components/tab-buttons.jsx'
 import {Row, Label, Square} from './components/rows.jsx'
 import NewInstrumentWindow from './components/newInstrumentWindow.jsx'
+// import GridLines from './components/grid-lines.jsx'
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B',];
 
-function setRowHeight(numToDisp){
 
-}
+
+const getProgress = ({elapsed, total}) =>
+  Math.min(elapsed / total, 1);
+
+const element = document.querySelector("span");
+const finalPosition = 200;
+
+var time = {
+  start: performance.now(),
+  total: 200,
+  counter: 0,
+  started: false,
+};
+
+const tick = now => {
+  time.elapsed = now - time.start;
+  const progress = getProgress(time);
+  const position = progress * finalPosition;
+  if (progress < 1){
+  	requestAnimationFrame(tick);
+  } else {
+    if(time.started){
+  	time = {
+  		  start: performance.now(),
+  	  	total: 200,
+  	  	counter: (time.counter)%32,
+        started: true,
+  	  };
+  	requestAnimationFrame(tick);
+  	console.log(time.counter);
+  	time.counter += 1;
+  } else {
+    console.log('Stopped')
+  }
+
+  }
+};
+
+
+
 
 function createEmptygrid(rows){
   let empty = [];
@@ -47,11 +86,14 @@ class TBD2 extends React.Component {
       lastCellLeft: '',
       twoCellsBack: '',
       mouseIsDown: false,
+      measures: 2,
+      quant: 0,
       startingColumn: '',
       columnChanged: '',
       reversing: false,
       newInst:{name: '', rows: ''},
       containerW: containerW,
+      rowWidrh: containerW-24,
       containerH: containerH,
       endingColumn: '',
       tabs: [{tabName: '+', index: 0, classToggle: ''  },{tabName: 'TBD', index: 1,classToggle: 'selected'}],
@@ -83,6 +125,7 @@ class TBD2 extends React.Component {
 
 
     this.handleChange = this.handleChange.bind(this);
+    this.quantChange = this.quantChange.bind(this);
     this.instName = this.instName.bind(this);
     this.countRows = this.countRows.bind(this);
   }
@@ -125,11 +168,44 @@ handleChange(event) {
     });
   }
 
+
+
+  quantChange(event){
+    let newQuant = event.target[event.target.selectedIndex].getAttribute('val');
+    let insts = this.state.instruments.slice();
+    let ix = this.state.currentTab;
+    if(newQuant){
+      let stepSize = (this.state.containerW-24)/(newQuant*this.state.measures);
+
+      insts[ix].notes = insts[ix].notes.map(el => {return {
+        start: stepSize*Math.round(el.start/stepSize),
+        end: Math.round(el.start/stepSize)===Math.round(el.end/stepSize) ?
+          (stepSize*Math.round(el.start/stepSize)) + el.end-el.start: stepSize*Math.round(el.end/stepSize),
+        row: el.row,
+      }
+      });
+    }
+    //Create the grid subdivision overlays
+
+    this.setState({
+        quant: newQuant,
+        instruments: insts,
+    })
+  }
+
   handleForPlay(){
     let toggle = !this.state.playing
     this.setState({
       playing: toggle,
     })
+    if(toggle){
+      time.started = true;
+    requestAnimationFrame(tick);
+  } else {
+    time.started = false;
+    // cancelAnimationFrame(raf);
+  }
+
   }
 
   zoom(inout){
@@ -170,8 +246,9 @@ handleChange(event) {
     let newHeight = this.state.newInst.rows > this.state.zoom ? 500/32 : 500/this.state.newInst.rows;
     let newInst ={
         squares: createEmptygrid(this.state.newInst.rows),
-        rows: this.state.newInst.rows,
+        rows: 128,
         columns: 32,
+        zoom:32,
         height: newHeight,
         width:Math.ceil(this.state.containerW-20)/(32),
         notes: [],
@@ -264,124 +341,6 @@ handleRowClick(e,index,clickType){
 
 }
 
-handleClick(i,j,clickType) {
-  let insts = this.state.instruments.slice();
-  let currentInst = insts[this.state.currentTab]
-  let squares = currentInst.squares.slice();
-  let notes = currentInst.notes.slice();
-
-  switch(clickType){
-    case 'down':
-      squares[i][j] = squares[i][j] === 'clicked'? '' : 'clicked';
-      this.setState({
-        currentRow:i,
-        squares:squares,
-        mouseIsDown:true,
-        currentColumn: j,
-        startingColumn: j,
-      })
-      break;
-
-    case 'leave':
-      if(this.state.mouseIsDown){
-        if(this.state.lastCellLeft !== '' && this.state.columnChanged){
-          this.setState({
-            twoCellsBack: this.state.lastCellLeft
-          })
-        }
-
-        this.setState({
-          lastCellLeft: j,
-        })
-
-      }
-      break;
-    case 'enter':
-      if(this.state.mouseIsDown){
-        let columnChanged = this.state.currentColumn === j ? false : true;
-        this.setState({
-          columnChanged: columnChanged,
-          currentColumn: j,
-        })
-        if(columnChanged){
-        squares[this.state.currentRow][j] = squares[this.state.currentRow][j] === 'clicked'? '' : 'clicked';
-          if(this.state.twoCellsBack === this.state.currentColumn){
-            this.setState({
-              reversing: true,
-            })
-            squares[this.state.currentRow][this.state.lastCellLeft] = '';
-
-          }
-        }
-      }
-      break;
-    case 'up':
-      if(this.state.currentRow !== ''){
-        if(j > this.state.startingColumn){
-          squares[this.state.currentRow][this.state.startingColumn]='left';
-          squares[this.state.currentRow][j]='right';
-          notes.push({
-            row: this.state.currentRow,
-            start: this.state.startingColumn,
-            end: j,
-          })
-
-        } else if (this.state.startingColumn === j){
-
-          squares[this.state.currentRow][j]='single';
-          notes.push({
-            row: this.state.currentRow,
-            start: j,
-            end: j,
-          })
-
-        } else  {
-          squares[this.state.currentRow][this.state.startingColumn]='right';
-          squares[this.state.currentRow][j]='left';
-
-          notes.push({
-            row: this.state.currentRow,
-            start: j,
-            end: this.state.startingColumn,
-          })
-        }
-        currentInst.squares = squares;
-        currentInst.notes = notes;
-        insts[this.state.currentTab] = currentInst;
-        this.setState({
-          lastCellLeft: '',
-          currentRow: '',
-          twoCellsBack: '',
-          mouseIsDown: false,
-          instruments: insts,
-          columnChanged: false,
-          reversing: false,
-          endingColumn: j,
-        })
-      }
-      break;
-      default:
-        console.error('Something slipped through the mouse click switch statement')
-  }
-}
-
-
-renderSquare(i,j) {
-  let currentInst = this.state.instruments[this.state.currentTab]
-  return (
-    <Square
-      key={i*currentInst.rows+j}
-      cellStatus={currentInst.squares[i][j]}
-      onMouseDown={() => this.handleClick(i,j,'down')}
-      onMouseLeave={() => this.handleClick(i,j,'leave')}
-      onMouseEnter={() => this.handleClick(i,j,'enter')}
-      onMouseUp={() => this.handleClick(i,j,'up')}
-      height={currentInst.height}
-      width={currentInst.width}
-    />
-  );
-}
-
 createGrid = () => {
   let grid = [];
   //For the rows
@@ -434,10 +393,9 @@ createGrid = () => {
       />
     )
   }
-
-
-
-
+  // for(let i= 0; i < this.state.quant; i++){
+  //   grid.props.value.push(<a class='quant-line'><a>)
+  // }
   return grid;
 }
 
@@ -455,6 +413,7 @@ createGrid = () => {
             addTab={()=>this.addTab()}
             zoomIn={()=>this.zoom("in")}
             zoomOut={()=>this.zoom("out")}
+            quantChange={this.quantChange}
           />
           <TabButtons className="tabButtons"
             tabs={this.renderTabs()}
