@@ -2,9 +2,9 @@ import React from 'react';
 
 function GridLines(props){
   return(
-    <a className={props.className}
-      style = {{height:props.height, width:props.width}}
-      ></a>
+    <div className={props.className}
+      style = {{height:props.height, width:props.width, left:props.left}}
+      ></div>
   )
 }
 
@@ -15,4 +15,4 @@ function GridLines(props){
 
 
 
-export default GridLine
+export default GridLines

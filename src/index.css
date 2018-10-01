@@ -126,6 +126,7 @@ border: solid black 2px;
     border: 1px solid black;
     border-left: 1px solid black;
     overflow-y: auto;
+    position: relative;
 }
 
 .gridContainer.newIns{
@@ -198,6 +199,16 @@ border: solid black 2px;
   border: solid 3px blue;
 }
 
+.grid-lines{
+  position: absolute;
+  pointer-events: none;
+  border-right: solid 2px black;
+  user-select: none;
+  height: 1000px;
+  z-index: 100;
+  top: 0px;
+  overflow-y: scroll;
+}
 
 .square.clicked{
     cursor:grab;

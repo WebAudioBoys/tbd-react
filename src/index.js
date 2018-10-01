@@ -7,7 +7,7 @@ import Note from './components/note.jsx'
 import {TabButton, TabButtons} from './components/tab-buttons.jsx'
 import {Row, Label, Square} from './components/rows.jsx'
 import NewInstrumentWindow from './components/newInstrumentWindow.jsx'
-// import GridLines from './components/grid-lines.jsx'
+import GridLines from './components/grid-lines.jsx'
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B',];
 
@@ -178,9 +178,8 @@ handleChange(event) {
       let stepSize = (this.state.containerW-24)/(newQuant*this.state.measures);
 
       insts[ix].notes = insts[ix].notes.map(el => {return {
-        start: stepSize*Math.round(el.start/stepSize),
-        end: Math.round(el.start/stepSize)===Math.round(el.end/stepSize) ?
-          (stepSize*Math.round(el.start/stepSize)) + el.end-el.start: stepSize*Math.round(el.end/stepSize),
+        start: stepSize*Math.round(el.start/stepSize)+24,
+        end: 24 + stepSize*Math.round(el.start/stepSize) + el.end-el.start,
         row: el.row,
       }
       });
@@ -393,9 +392,13 @@ createGrid = () => {
       />
     )
   }
-  // for(let i= 0; i < this.state.quant; i++){
-  //   grid.props.value.push(<a class='quant-line'><a>)
-  // }
+
+  if(this.state.quant !== 0){
+    let width = (this.state.containerW-24)/(this.state.quant*2);
+    for(let i= 0; i < this.state.quant*2; i++){
+      grid.push(<GridLines width={width} left={i*width+24} key={i} className='grid-lines'/>)
+    }
+  }
   return grid;
 }
 
