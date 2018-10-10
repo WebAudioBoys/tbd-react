@@ -93,7 +93,7 @@ class TBD2 extends React.Component {
       reversing: false,
       newInst:{name: '', rows: ''},
       containerW: containerW,
-      rowWidrh: containerW-24,
+      rowWidth: containerW-24,
       containerH: containerH,
       endingColumn: '',
       tabs: [{tabName: '+', index: 0, classToggle: ''  },{tabName: 'TBD', index: 1,classToggle: 'selected'}],
@@ -178,8 +178,8 @@ handleChange(event) {
       let stepSize = (this.state.containerW-24)/(newQuant*this.state.measures);
 
       insts[ix].notes = insts[ix].notes.map(el => {return {
-        start: stepSize*Math.round(el.start/stepSize)+24,
-        end: 24 + stepSize*Math.round(el.start/stepSize) + el.end-el.start,
+        start: stepSize*Math.round((el.start-24)/stepSize)+24,
+        end: 24 + stepSize*Math.round((el.start-24)/stepSize) + (el.end-el.start),
         row: el.row,
       }
       });
@@ -226,8 +226,9 @@ handleChange(event) {
       default:
       console.err("Zoom in flag improperly sent");
     }
+    this.state.containerH*128/insts[ix].zoom
     this.setState({
-      instruments: insts
+      instruments: insts,
     })
   }
 
