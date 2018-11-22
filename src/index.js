@@ -86,6 +86,7 @@ class TBD2 extends React.Component {
       lastCellLeft: '',
       twoCellsBack: '',
       mouseIsDown: false,
+      noteMoving: false,
       measures: 2,
       quant: 0,
       startingColumn: '',
@@ -290,22 +291,53 @@ handleChange(event) {
   return tabs;
 }
 
+// onNoteClick(e,index,clickType){
+//   let insts = this.state.instruments.slice();
+//   switch(clickType){
+//     case 'down':
+//     this.setState({
+//       currentRow: index,
+//       startPos: e.clientX-22,
+//       endPos:  e.clientX-22,
+//       noteMoving: true,
+//     });
+//     break;
+//     case 'move':
+//       if(this.state.noteMoving){
+//         console.log('Note moving');
+//         this.setState({
+//           currentRow: index,
+//       }
+//     break;
+//     case 'up':
+//     this.setState({
+//       noteStarted: false,
+//       noteMoving:false,
+//       instruments: insts,
+//     });
+//     break;
+//     default:
+//     break;
+// }
+// }
+
 handleRowClick(e,index,clickType){
   let insts = this.state.instruments.slice();
+
   switch(clickType){
     case 'down':
     this.setState({
       currentRow: index,
       startPos: e.clientX-22,
       endPos:  e.clientX-22,
-      mouseIsDown: true,
+      mouseIsDown:  true,
       reversing:false,
     });
     break;
 
     case 'move':
 
-      if(this.state.mouseIsDown){
+      if(this.state.mouseIsDown && !this.state.noteMoving){
         let poles = [this.state.startPos,e.clientX-22].sort((a,b)=> {return a - b});
         if(!this.state.noteStarted){
           insts[this.state.currentTab].notes.push({
@@ -334,11 +366,22 @@ handleRowClick(e,index,clickType){
       instruments: insts,
     });
     break;
+
+    case 'note-down':
+    this.setState({
+      mouseIsDown:false,
+      noteMoving: true,
+    })
+    break;
+    case 'note-move':
+    if (this.state.noteMoving) console.log('move');
+    break;
+    case 'note-up':
+    console.log('note-up')
+    break;
     default:
     break;
-
   }
-
 }
 
 createGrid = () => {
@@ -390,6 +433,9 @@ createGrid = () => {
         key={i}
         width={currentNote.end-currentNote.start}
         position={currentNote.start}
+        onNoteClick = {(e)=>this.handleRowClick(e,i,'note-down')}
+        onNoteMove = {(e)=>this.handleRowClick(e,i,'note-move')}
+        onNoteRelease = {(e)=>this.handleRowClick(e,i,'note-up')}
       />
     )
   }
